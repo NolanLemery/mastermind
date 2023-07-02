@@ -96,6 +96,7 @@ h1 {
 
 .feedback {
     display: grid;
+    grid-template: auto auto / repeat(2, 2fr);
     height: 50px;
     width: 80px;
     border-radius: 10px;
@@ -103,4 +104,15 @@ h1 {
     border-style: solid;
     margin-right: 3px;
     background-color: rgb(180, 141, 89);
+}
+
+.pin {
+    height: 20px;
+    width: 20px;
+    border-color: black;
+    border-style: solid;
+    border-width: 1;
+    border-radius: 50%;
+    margin-left: 8px;
+    margin-top: 2px;
 }
