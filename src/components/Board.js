@@ -117,7 +117,62 @@ export default function Board() {
     }
 
     function submitGuess() {
-
+        let origGuess = rows[activeRowNum].getSeries()
+        let guess = new Series(false, origGuess.getFirst(), 
+        origGuess.getSecond(), origGuess.getThird(), origGuess.getFourth())
+        let hitNum = 0
+        let nearHits = []
+        let remainingCode = []
+        for (let i = 1; i < 5; i++) {
+            if (guess.getSlot(i) === code.getSlot(i)) {
+                hitNum += 1
+            }
+            else {
+                nearHits.push(guess.getSlot(i))
+                remainingCode.push(code.getSlot(i))
+            }
+        }
+        let nearHitNum = 0
+        for (let i = 0; i < nearHits.length; i++) {
+            for (let j = 0; j < remainingCode.length; j++) {
+                if (nearHits[i] === remainingCode[j]) {
+                    nearHitNum += 1
+                    remainingCode.splice(j, 1)
+                    // j -= 1
+                    nearHits.splice(i, 1)
+                    i -= 1
+                    break;
+                }
+            }
+        }
+        let hint = new Hint(guess)
+        for (let i = 1; i < 5; i++) {
+            if (hitNum > 0) {
+                hint.setSlot(i, Color.Red)
+                hitNum -= 1
+            }
+            else if (nearHitNum > 0) {
+                hint.setSlot(i, Color.White)
+                nearHitNum -= 1
+            }
+        }
+        setRows(prevRows => {{
+            let newRows = []
+            for (let i = 0; i < prevRows.length; i++) {
+                if (i === activeRowNum) {
+                    newRows.push(new Pair(guess, hint))
+                }
+                else if (i === activeRowNum + 1) {
+                    let newActiveSeries = new Series(true)
+                    newRows.push(new Pair(newActiveSeries))
+                }
+                else {
+                    newRows.push(prevRows[i])
+                }
+            }
+            return newRows
+        }})
+        setActiveRowNum(prevActiveRowNum => (prevActiveRowNum + 1))
     }
 
     return (
