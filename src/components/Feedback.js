@@ -17,9 +17,21 @@ export default function Feedback(props) {
         return pinArr
     }
 
+    function createButton() {
+        return <button className="feedback--submit" onClick={props.submitGuess}>
+            Submit
+            </button>
+    }
+
+    const renderButton = props.hint.getSeries().isInteractable() 
+    && props.hint.getSeries().getFirst() !== State.Empty
+    && props.hint.getSeries().getSecond() !== State.Empty
+    && props.hint.getSeries().getThird() !== State.Empty
+    && props.hint.getSeries().getFourth() !== State.Empty;
+
     return (
         <div className="feedback">
-            {createPins()}
+            {renderButton ? createButton() : createPins()}
         </div>
     )
 }

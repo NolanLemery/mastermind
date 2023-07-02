@@ -6,6 +6,7 @@ import Code from "./Code"
 import Series from "../data/Series"
 import Pair from "../data/Pair"
 import Hint from "../data/Hint"
+import State from "../data/State"
 
 export default function Board() {
 
@@ -41,6 +42,22 @@ export default function Board() {
     const defaultCode = randomSeries()
     const [code, setCode] = React.useState(defaultCode)
 
+    /*
+    React.useEffect(() => {
+        if (rows[activeRowNum].getSeries().isInteractable()
+        && rows[activeRowNum].getSeries().getFirst() !== State.Empty
+        && rows[activeRowNum].getSeries().getSecond() !== State.Empty
+        && rows[activeRowNum].getSeries().getThird() !== State.Empty
+        && rows[activeRowNum].getSeries().getFourth() !== State.Empty) {
+            setRows(prevRows => prevRows.map((row) => {
+                if (row.getSeries().isInteractable()) {
+                    return new Pair(row.getSeries())
+                }...
+            }))
+        }
+    }, [rows])
+    */
+
     function makePeg(color) {
         return <Peg color={color} 
         selected={color === selectedColor}
@@ -59,7 +76,8 @@ export default function Board() {
         updateRowsFirst={row.getSeries().isInteractable() ? (() => updateRows(1)) : (void(0))}
         updateRowsSecond={row.getSeries().isInteractable() ? (() => updateRows(2)) : (void(0))}
         updateRowsThird={row.getSeries().isInteractable() ? (() => updateRows(3)) : (void(0))}
-        updateRowsFourth={row.getSeries().isInteractable() ? (() => updateRows(4)) : (void(0))}/>
+        updateRowsFourth={row.getSeries().isInteractable() ? (() => updateRows(4)) : (void(0))}
+        submitGuess={submitGuess}/>
     }
     const displayRows = rows.map(makeRow)
 
@@ -96,6 +114,10 @@ export default function Board() {
 
     function createCode() {
         setCode(randomSeries())
+    }
+
+    function submitGuess() {
+
     }
 
     return (

@@ -6,7 +6,7 @@ export default function Row(props) {
 
     return (
         <div className="row">
-            <Feedback hint={props.hint}/>
+            <Feedback hint={props.hint} submitGuess={props.submitGuess}/>
             <Code series={props.series} 
             updateRowsFirst={props.updateRowsFirst}
             updateRowsSecond={props.updateRowsSecond}
