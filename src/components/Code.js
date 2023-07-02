@@ -20,8 +20,13 @@ export default function Code(props) {
         return pegArr
     }
 
+    const solutionStyles = {
+        marginLeft: 90,
+        marginTop: 5
+    }
+
     return (
-        <div className="code">
+        <div className="code" style={props.solution && solutionStyles}>
             {createPegs()}
         </div>
     )

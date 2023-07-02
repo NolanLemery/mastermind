@@ -38,6 +38,9 @@ export default function Board() {
     ]
     const [rows, setRows] = React.useState(defaultRows)
 
+    const defaultCode = randomSeries()
+    const [code, setCode] = React.useState(defaultCode)
+
     function makePeg(color) {
         return <Peg color={color} 
         selected={color === selectedColor}
@@ -81,7 +84,19 @@ export default function Board() {
         }))
     }
 
-    
+    function randomSeries() {
+        const codeColors = []
+        for (let i = 0; i < 4; i++) {
+            let index = Math.floor(Math.random() * colorSet.length)
+            codeColors.push(colorSet[index])
+        }
+        return new Series(false, codeColors[0], codeColors[1], 
+            codeColors[2], codeColors[3])
+    }
+
+    function createCode() {
+        setCode(randomSeries())
+    }
 
     return (
         <div className="board">
@@ -89,8 +104,13 @@ export default function Board() {
                 <h2>Directions here</h2>
             </div>
             <div className="board--mat">
-                <Code series={new Series()}/>
                 {displayRows}
+                <Code series={code} 
+                updateRowsFirst={void(0)}
+                updateRowsSecond={void(0)}
+                updateRowsThird={void(0)}
+                updateRowsFourth={void(0)}
+                solution={true}/>
             </div>
             <div className="board--colors">
                 {pegSet}
