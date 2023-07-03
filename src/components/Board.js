@@ -7,6 +7,7 @@ import Series from "../data/Series"
 import Pair from "../data/Pair"
 import Hint from "../data/Hint"
 import State from "../data/State"
+import { act } from "react-dom/test-utils"
 
 export default function Board() {
 
@@ -42,26 +43,26 @@ export default function Board() {
     const defaultCode = randomSeries()
     const [code, setCode] = React.useState(defaultCode)
 
-    /*
+    const [gameState, setGameState] = React.useState(State.Empty)
+
     React.useEffect(() => {
-        if (rows[activeRowNum].getSeries().isInteractable()
-        && rows[activeRowNum].getSeries().getFirst() !== State.Empty
-        && rows[activeRowNum].getSeries().getSecond() !== State.Empty
-        && rows[activeRowNum].getSeries().getThird() !== State.Empty
-        && rows[activeRowNum].getSeries().getFourth() !== State.Empty) {
-            setRows(prevRows => prevRows.map((row) => {
-                if (row.getSeries().isInteractable()) {
-                    return new Pair(row.getSeries())
-                }...
-            }))
+        if (activeRowNum > 0
+        && rows[activeRowNum - 1].getHint().getFirst() === Color.Red
+        && rows[activeRowNum - 1].getHint().getSecond() === Color.Red
+        && rows[activeRowNum - 1].getHint().getThird() === Color.Red
+        && rows[activeRowNum - 1].getHint().getFourth() === Color.Red) {
+            setGameState(State.Win)
         }
-    }, [rows])
-    */
+        else if (activeRowNum > 7) {
+            setGameState(State.Lose)
+        }
+    }, [activeRowNum])
 
     function makePeg(color) {
         return <Peg color={color} 
         selected={color === selectedColor}
-        clickPeg={() => switchSelectedColor(color)}
+        clickPeg={gameState === State.Empty ? 
+            (() => switchSelectedColor(color)) : (void(0))}
         empty={false}/>
     }
     const pegSet = colorSet.map(makePeg)
@@ -73,10 +74,14 @@ export default function Board() {
     function makeRow(row) {
         return <Row series={row.getSeries()}
         hint={row.getHint()}
-        updateRowsFirst={row.getSeries().isInteractable() ? (() => updateRows(1)) : (void(0))}
-        updateRowsSecond={row.getSeries().isInteractable() ? (() => updateRows(2)) : (void(0))}
-        updateRowsThird={row.getSeries().isInteractable() ? (() => updateRows(3)) : (void(0))}
-        updateRowsFourth={row.getSeries().isInteractable() ? (() => updateRows(4)) : (void(0))}
+        updateRowsFirst={(row.getSeries().isInteractable() && gameState === State.Empty) ? 
+            (() => updateRows(1)) : (void(0))}
+        updateRowsSecond={(row.getSeries().isInteractable() && gameState === State.Empty) ? 
+            (() => updateRows(2)) : (void(0))}
+        updateRowsThird={(row.getSeries().isInteractable() && gameState === State.Empty) ? 
+            (() => updateRows(3)) : (void(0))}
+        updateRowsFourth={(row.getSeries().isInteractable() && gameState === State.Empty) ? 
+            (() => updateRows(4)) : (void(0))}
         submitGuess={submitGuess}/>
     }
     const displayRows = rows.map(makeRow)
@@ -175,10 +180,32 @@ export default function Board() {
         setActiveRowNum(prevActiveRowNum => (prevActiveRowNum + 1))
     }
 
+    function renderGameEnd() {
+        let renderArr = []
+        renderArr.push(
+        <h1>
+            {gameState === State.Win ? "You Win" : "You Lose"}
+        </h1>)
+        renderArr.push(
+        <button className="board--directions--restart" onClick={restartGame}>
+            New Game
+        </button>)
+        return renderArr
+    }
+
+    function restartGame() {
+        setRows(defaultRows)
+        setActiveRowNum(0)
+        createCode()
+        setGameState(State.Empty)
+    }
+
     return (
         <div className="board">
             <div className="board--directions">
                 <h2>Directions here</h2>
+                <br></br>
+                {gameState !== State.Empty && renderGameEnd()}
             </div>
             <div className="board--mat">
                 {displayRows}
@@ -187,7 +214,8 @@ export default function Board() {
                 updateRowsSecond={void(0)}
                 updateRowsThird={void(0)}
                 updateRowsFourth={void(0)}
-                solution={true}/>
+                solution={true}
+                hidden={gameState === State.Empty}/>
             </div>
             <div className="board--colors">
                 {pegSet}

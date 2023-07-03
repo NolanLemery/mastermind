@@ -27,7 +27,7 @@ export default function Code(props) {
 
     return (
         <div className="code" style={props.solution && solutionStyles}>
-            {createPegs()}
+            {props.hidden ? <></> : createPegs()}
         </div>
     )
 }
