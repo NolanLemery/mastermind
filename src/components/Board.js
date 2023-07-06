@@ -58,6 +58,12 @@ export default function Board() {
         }
     }, [activeRowNum])
 
+    const ref = React.useRef(null)
+
+    React.useEffect(() => {
+        ref.current.focus()
+    }, [])
+
     function makePeg(color) {
         return <Peg color={color} 
         selected={color === selectedColor}
@@ -178,6 +184,7 @@ export default function Board() {
             return newRows
         }})
         setActiveRowNum(prevActiveRowNum => (prevActiveRowNum + 1))
+        ref.current.focus()
     }
 
     function renderGameEnd() {
@@ -198,13 +205,40 @@ export default function Board() {
         setActiveRowNum(0)
         createCode()
         setGameState(State.Empty)
+        ref.current.focus()
+    }
+
+    function handleKeyDown(event) {
+        let up;
+        if (event.key === 'w' || event.key === "ArrowUp") {
+            up = true
+        }
+        else if (event.key === 's' || event.key === "ArrowDown") {
+            up = false
+        }
+        else {
+            return;
+        }
+        let colorIndex = colorSet.findIndex((color) => (color === selectedColor))
+        if (up && colorIndex > 0) {
+            setSelectedColor(colorSet[colorIndex - 1])
+        }
+        else if (!up && colorIndex < colorSet.length - 1) {
+            setSelectedColor(colorSet[colorIndex + 1])
+        }
     }
 
     return (
-        <div className="board">
+        <div className="board" ref={ref} tabIndex={-1} onKeyDown={handleKeyDown}>
             <div className="board--directions">
-                <h2>Directions here</h2>
-                <br></br>
+                <h2>
+                    Guess the four-color code (hidden at the bottom of the board). 
+                    Use UP/DOWN (or W/S) to navigate the selectable colors. Click 
+                    the spot you want to insert the selected color. Guesses start 
+                    at the top and move down. A Red feedback pin signifies a Color 
+                    in the correct spot. A White feedback pin signfies a Color exists 
+                    in the hidden code, but it is in the wrong spot.
+                </h2>
                 {gameState !== State.Empty && renderGameEnd()}
             </div>
             <div className="board--mat">
